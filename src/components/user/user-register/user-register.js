@@ -29,9 +29,7 @@ const UserRegister = () => {
         })
         .catch((err) => {
             console.log("err",err)
-        })
-
-        
+        })    
         
     }
 
@@ -48,6 +46,8 @@ const UserRegister = () => {
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            keyboardType='email-address'
+            
           />
         )}
         name="Email"
