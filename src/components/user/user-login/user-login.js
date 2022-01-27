@@ -26,7 +26,6 @@ const UserLogin = () => {
             const token = jwtDecode(res.data.accesToken);
             AsyncStorage.setItem('@storage_Token', res.data.accesToken)
             dispatch(start(token))
-            console.log("decode===", token)
         })
         .catch((err) => {
             console.log("err",err)

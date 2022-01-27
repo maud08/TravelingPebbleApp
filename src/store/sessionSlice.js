@@ -10,7 +10,6 @@ export const sessionSlice = createSlice({
         start: (state, {payload}) => {
             state.isLogged = true;
             state.user = payload
-            console.log("token==", state.token, state.roles)
             return state;
         },
         end: (state) => {
