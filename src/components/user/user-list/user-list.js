@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import {View, Text, FlatList} from 'react-native';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {REACT_APP_URL} = process.env
 
@@ -10,12 +10,20 @@ const UserList = () => {
 
     const [data, setData] = useState([])
 
+
     useEffect(()=>{
-        axios.get(REACT_APP_URL + '/user')
-            .then(({data}) => {
-                setData(data) 
-            })
-            .catch(err => {console.log(err)})
+        AsyncStorage.getItem("@storage_Token").then(token => {
+            if(!token)return;
+            const config = {headers:{Authorization:"Bearer " + token}}
+
+            axios.get(REACT_APP_URL + '/user', config)
+                .then(({data}) => {
+                    setData(data) 
+                })
+                .catch(err => {console.log(err)})
+
+            }) 
+        
     },[])
 
     return(
