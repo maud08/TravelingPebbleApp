@@ -1,6 +1,5 @@
 import axios from 'axios';
 import * as React from 'react';
-import { Dimensions } from 'react-native'
 import {useForm, Controller} from 'react-hook-form';
 import {
     ScrollView,
@@ -70,6 +69,8 @@ const PebbleCreate = ({navigation}) => {
             };
             axios.post(REACT_APP_URL + '/pebble', formData).then(() => {
                 navigation.navigate('account');
+                setImageData();
+                setCurrentPosition();
             }).catch((err) => {
                 console.log("err", err)
             })
