@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import {end, start} from './src/store/sessionSlice'
 import jwtDecode from 'jwt-decode';
+import PebbleCreate from './src/components/pebble/pebble-create/pebble-create';
 
 
 
@@ -43,11 +44,12 @@ function CustomDrawerContent(props) {
 function MyDrawer() {
   const isLogged = useSelector(state => state.session.isLogged);
   return (
-    <Drawer.Navigator initialRouteName="Login" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+    <Drawer.Navigator initialRouteName="Pebble" drawerContent={(props) => <CustomDrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={HomeScreen} />
         <Drawer.Screen name="Details" component={DetailsScreen} />
         <Drawer.Screen name="User" component={UserList} />
         <Drawer.Screen name="Register" component={UserRegister} />
+        <Drawer.Screen name="Pebble" component={PebbleCreate}/>
         {!isLogged && <Drawer.Screen name="Login" component={UserLogin} />}
     </Drawer.Navigator>
   );
