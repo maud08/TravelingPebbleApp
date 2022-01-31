@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useForm, Controller } from 'react-hook-form';
 import { Text, View, TextInput, Button, Alert, Modal, Pressable, StyleSheet } from "react-native";
 import { useState } from 'react';
+import stylesApp from '../../../app-styles';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import UserRegisterStyle from './user-register-styles';
 
 
 const {REACT_APP_URL} = process.env;
@@ -14,7 +17,7 @@ const defaultValues = {
     Country: '',
 }
 
-const UserRegister = () => {
+const UserRegister = ({navigation}) => {
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -34,19 +37,22 @@ const UserRegister = () => {
     }
 
     return(
-    <View>
-        <Text>Email</Text>
+    <SafeAreaView style={stylesApp.container}>
+      <View style={stylesApp.content}>
       <Controller
         control={control}
         rules={{
          required: true,
+         
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            style={stylesApp.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             keyboardType='email-address'
+            placeholder='Votre Email'
             
           />
         )}
@@ -54,7 +60,6 @@ const UserRegister = () => {
       />
       {errors.Email && <Text>Email is required.</Text>}
 
-      <Text>Pseudo</Text>
       <Controller
         control={control}
         rules={{
@@ -62,16 +67,17 @@ const UserRegister = () => {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            style={stylesApp.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            placeholder='Votre Pseudo'
           />
         )}
         name="Pseudo"
       />
       {errors.Pseudo && <Text>Pseudo is required.</Text>}
 
-      <Text>Password</Text>
       <Controller
         control={control}
         rules={{
@@ -79,27 +85,31 @@ const UserRegister = () => {
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            style={stylesApp.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
             secureTextEntry={true}
+            placeholder='Votre mot de passe'
           />
         )}
         name="Password"
       />
       {errors.Password && <Text>Password is required.</Text>}
 
-      <Text>Country</Text>
       <Controller
         control={control}
         rules={{
          required: true,
+         
         }}
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
+            style={stylesApp.input}
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
+            placeholder='Votre pays'
           />
         )}
         name="Country"
@@ -107,82 +117,43 @@ const UserRegister = () => {
       {errors.Country && <Text>Country is required.</Text>}
 
 
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <View style={stylesApp.viewSend}>
+        <Button title="Inscription" onPress={handleSubmit(onSubmit)} color={'#04BF9D'}/>
+      </View>
 
       {modalVisible && 
         <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
           Alert.alert("Modal has been closed.");
           setModalVisible(!modalVisible);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>You are well registered !</Text>
+        <View style={UserRegisterStyle.centeredView}>
+          <View style={UserRegisterStyle.modalView}>
+            <Text style={UserRegisterStyle.modalText}>Merci pour votre inscription!</Text>
             <Pressable
-              style={[styles.button, styles.buttonClose]}
+              style={[UserRegisterStyle.button, UserRegisterStyle.buttonClose]}
               onPress={() => {
-                  setModalVisible(!modalVisible);  
                   reset();
+                  setModalVisible(!modalVisible);  
+                  navigation.navigate('Login')
                 }}
             >
-              <Text style={styles.textStyle}>Hide Modal</Text>
+              <Text style={UserRegisterStyle.textStyle}>Fermer</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
       }
-    </View>
+      </View>
+    </SafeAreaView>
     );
 
 
 }
 
-const styles = StyleSheet.create({
-    centeredView: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      marginTop: 22
-    },
-    modalView: {
-      margin: 20,
-      backgroundColor: "white",
-      borderRadius: 20,
-      padding: 35,
-      alignItems: "center",
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-      elevation: 5
-    },
-    button: {
-      borderRadius: 20,
-      padding: 10,
-      elevation: 2
-    },
-    buttonOpen: {
-      backgroundColor: "#F194FF",
-    },
-    buttonClose: {
-      backgroundColor: "#2196F3",
-    },
-    textStyle: {
-      color: "white",
-      fontWeight: "bold",
-      textAlign: "center"
-    },
-    modalText: {
-      marginBottom: 15,
-      textAlign: "center"
-    }
-  });
 
 export default UserRegister;

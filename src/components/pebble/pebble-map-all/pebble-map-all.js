@@ -15,23 +15,22 @@ const PebbleMapAll = () => {
     const [pebbles, setPebbles] = useState();
     const [currentPosition, setCurrentPosition] = useState();
 
+
     const window = Dimensions.get('window');
     const { width, height }  = window;
     const LATITUD_DELTA = 0.0922;
     const LONGITUDE_DELTA = LATITUD_DELTA + (width / height);
 
     useEffect(() => {
-
         axios.get(REACT_APP_URL + '/pebble')
         .then(({data}) => {
             setPebbles(data);
         })
         .catch(err => {console.log(err)})
-
-    },[])
-
+    },[]);
 
     useEffect(() => {
+
         Geolocation.getCurrentPosition((position) => {
             setCurrentPosition({
                 lat: position.coords.latitude,
@@ -45,7 +44,9 @@ const PebbleMapAll = () => {
             timeout: 15000,
             maximumAge: 10000
         });
-    },[])
+
+    },[]);
+
 
     const styles = StyleSheet.create({
         map: {
@@ -60,16 +61,12 @@ const PebbleMapAll = () => {
                 <>
                     <MapView
                     style={styles.map}
-                    loadingEnabled = {true}
-                    moveOnMarkerPress = {false}
                     showsUserLocation={true}
-                    showsCompass={true}
-                    showsPointsOfInterest = {false}
                     initialRegion={{
-                    latitude: currentPosition.lat,
-                    longitude: currentPosition.lng,
-                    latitudeDelta: LATITUD_DELTA,
-                    longitudeDelta: LONGITUDE_DELTA,
+                        latitude: currentPosition.lat,
+                        longitude: currentPosition.lng,
+                        latitudeDelta: LATITUD_DELTA,
+                        longitudeDelta: LONGITUDE_DELTA,
                     }}
                     >
                         
@@ -81,7 +78,6 @@ const PebbleMapAll = () => {
                                 key={marker._id}
                                 coordinate={{ latitude : marker.Position.lat , longitude : marker.Position.lng }}
                                 title={marker.Label}
-                                description={marker.Label}
                             />
                         ))}
                     </>

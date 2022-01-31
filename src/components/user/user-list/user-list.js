@@ -30,8 +30,8 @@ const UserList = () => {
         <View>
             <Text>Email - Pseudo - Pays</Text>
             <FlatList
-            data={data}
-            renderItem={({item}) => <Text>{item.Email} - {item.Pseudo} {item.Country}</Text>}
+                data={data}
+                renderItem={({item}) => <Text>{item.Email} - {item.Pseudo} {item.Country}</Text>}
             />
         </View>
    

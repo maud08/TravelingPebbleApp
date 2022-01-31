@@ -1,18 +1,12 @@
 import axios from 'axios';
 import * as React from 'react';
 import {useForm, Controller} from 'react-hook-form';
-import {
-    ScrollView,
-    Text,
-    TextInput,
-    Button,
-    StyleSheet,
-    Image
-} from "react-native";
+import {ScrollView,Text,TextInput,Button,StyleSheet,Image} from "react-native";
 import {useState, useEffect} from 'react';
 import * as ImagePicker from "react-native-image-picker";
 import Geolocation from 'react-native-geolocation-service';
 import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const {REACT_APP_URL} = process.env;
 
@@ -26,6 +20,7 @@ const PebbleCreate = ({navigation}) => {
     const {control, handleSubmit, formState: {errors}, reset} = useForm({defaultValues});
     const [imageData, setImageData] = useState();
     const [currentPosition, setCurrentPosition] = useState();
+    const [disabled, setDisabled] = useState(false)
     let styles = null;
 
     useEffect(() => {
@@ -55,6 +50,7 @@ const PebbleCreate = ({navigation}) => {
 
         ImagePicker.launchCamera(options, (response) => {
             setImageData(response.assets)
+            setDisabled(true);
         });
     }
 
@@ -67,13 +63,21 @@ const PebbleCreate = ({navigation}) => {
                 Position: currentPosition
 
             };
-            axios.post(REACT_APP_URL + '/pebble', formData).then(() => {
-                navigation.navigate('account');
-                setImageData();
-                setCurrentPosition();
-            }).catch((err) => {
-                console.log("err", err)
+
+            AsyncStorage.getItem("@storage_Token")
+            .then(token => {
+                if(!token) return;
+                const config = {headers:{Authorization:"Bearer " + token}}
+                axios.post(REACT_APP_URL + '/pebble', formData, config)
+                .then(() => {
+                    navigation.navigate('account');
+                    setImageData();
+                    setCurrentPosition();
+                }).catch((err) => {
+                    console.log("err", err)
+                })
             })
+            
         }
     }
 
@@ -89,7 +93,7 @@ const PebbleCreate = ({navigation}) => {
 
     return (
         <ScrollView>
-            {imageData && 
+            {imageData !== undefined && 
             <>
                     <Controller
                         control={control}
@@ -110,11 +114,11 @@ const PebbleCreate = ({navigation}) => {
                 <Image
                 style={styles.preview} 
                 source={{uri:`data:${imageData[0].type};base64,${imageData[0].base64}`}}/>
+                <Button title='Save' onPress={handleSubmit(onSubmit)} color={'#04BF9D'}/>
             </>
             }
-            <Button title='Take picture'onPress={onPressPicture}/>
-            <Text></Text>
-            <Button title='Save' onPress={handleSubmit(onSubmit)}/>
+            <Button title='Take picture'onPress={onPressPicture} color={'#04BF9D'} disabled={disabled}/>
+            
         </ScrollView>
     );
 }

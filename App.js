@@ -1,8 +1,6 @@
 import 'react-native-gesture-handler';
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import HomeScreen from './src/components/HomeScreen';
-import DetailsScreen from './src/components/DetailsScreen';
 import { createDrawerNavigator, DrawerItem, DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
 import UserList from './src/components/user/user-list/user-list';
 import UserRegister from './src/components/user/user-register/user-register';
@@ -14,6 +12,7 @@ import jwtDecode from 'jwt-decode';
 import PebbleCreate from './src/components/pebble/pebble-create/pebble-create';
 import UserAccount from './src/components/user/user-account/user-account';
 import PebbleMapAll from './src/components/pebble/pebble-map-all/pebble-map-all';
+import Home from './src/components/home/home';
 
 
 
@@ -34,7 +33,7 @@ function CustomDrawerContent(props) {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
-      {isLogged &&<DrawerItem label="Logout" onPress={() => {
+      {isLogged &&<DrawerItem label="Déconnexion" onPress={() => {
         props.navigation.closeDrawer();
         dispatch(end());
         singOut(); 
@@ -44,21 +43,31 @@ function CustomDrawerContent(props) {
 }
 
 function MyDrawer() {
-  const isLogged = useSelector(state => state.session.isLogged);
+  const session = useSelector(state => state.session);
+  const isLogged = session.isLogged;
   return (
-    <Drawer.Navigator initialRouteName="Map pebble" drawerContent={(props) => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Register" component={UserRegister} />
-        <Drawer.Screen name="Map pebble" component={PebbleMapAll} />
+    <Drawer.Navigator initialRouteName="Home" drawerContent={(props) => <CustomDrawerContent {...props} />}>
+      <Drawer.Screen name="Home" component={Home} options={{drawerLabel: 'Acceuil' }} />
+        <Drawer.Screen name="Map pebble" component={PebbleMapAll} options={{drawerLabel: 'Voir tout les galets' }}/>
         {isLogged && 
           <>
-            <Drawer.Screen name="User" component={UserList} />
-            <Drawer.Screen name="Pebble" component={PebbleCreate}/>
-            <Drawer.Screen name="account" component={UserAccount}/>
+            <Drawer.Screen name="Pebble" component={PebbleCreate} options={{drawerLabel: 'Ajouter un galet' }}/>
+            <Drawer.Screen name="account" component={UserAccount} options={{drawerLabel: 'Votre compte' }}/>
+            {session.user.UserRoles.includes("Admin") && 
+              <>
+                <Drawer.Screen name="User" component={UserList} options={{drawerLabel: 'Liste utilisateurs' }}/>
+              </>
+            }
           </>
+
         }
         
-        {!isLogged && <Drawer.Screen name="Login" component={UserLogin} />}
+        {!isLogged && 
+          <>
+            <Drawer.Screen name="Register" component={UserRegister} options={{drawerLabel: 'Inscription' }} />
+            <Drawer.Screen name="Login" component={UserLogin} options={{drawerLabel: 'Connexion' }}/>
+          </>
+        }
     </Drawer.Navigator>
   );
 }
